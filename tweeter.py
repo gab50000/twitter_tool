@@ -5,6 +5,8 @@ import tweepy
 import sys
 from bs4 import BeautifulSoup
 import requests
+import gnupg
+import os
 
 def read_tokens(token_file):
 	with open(token_file, "r") as f:
@@ -29,7 +31,8 @@ def authenticate_and_read(access_token, access_token_secret, api_key, api_secret
 
 	api = tweepy.API(auth)
 
-	ipdb.set_trace()
+def encrypt_and_post():
+	pass
 
 def read_posts(user):
 	website = "https://twitter.com/{}".format(user)
@@ -42,8 +45,9 @@ def read_posts(user):
 
 #Save access token, access token secret, api key and api secret in a text file called tokens
 if __name__ == "__main__":
+	script_path = os.path.dirname(os.path.realpath(__file__))
 	if sys.argv[1] == "write":
-		tokens = read_tokens("tokens")
+		tokens = read_tokens(os.path.join(script_path, "tokens"))
 		authenticate_and_tweet(" ".join(sys.argv[2:]), *tokens)
 	elif sys.argv[1] == "read":
 		user = sys.argv[2]
