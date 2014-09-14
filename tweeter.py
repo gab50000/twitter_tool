@@ -1,8 +1,8 @@
 #!/usr/bin/python
+#Packages needed (Debian/Ubuntu): python-tweepy, python-bs4, python-requests
 
 import tweepy
 import sys
-import ipdb
 from bs4 import BeautifulSoup
 import requests
 
