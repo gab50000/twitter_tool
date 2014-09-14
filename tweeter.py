@@ -8,31 +8,45 @@ import requests
 import gnupg
 import os
 
-def read_tokens(token_file):
-	with open(token_file, "r") as f:
-		access_token = f.readline()[:-1]
-		access_token_secret = f.readline()[:-1]
-		api_key = f.readline()[:-1]
-		api_secret = f.readline()[:-1]
+class Twit:
 
-	return access_token, access_token_secret, api_key, api_secret
+	def __init__(self, token_file):
+		self.access_token, self.access_token_secret, self.api_key, self.api_secret = self.read_tokens(token_file)
+		auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+		auth.set_access_token(self.access_token, self.access_token_secret)
+		self.api = tweepy.API(auth)
 
-def authenticate_and_tweet(message, access_token, access_token_secret, api_key, api_secret):
-	auth = tweepy.OAuthHandler(api_key, api_secret)
-	auth.set_access_token(access_token, access_token_secret)
 
-	api = tweepy.API(auth)
+	def read_tokens(self, token_file):
+		with open(token_file, "r") as f:
+			access_token = f.readline()[:-1]
+			access_token_secret = f.readline()[:-1]
+			api_key = f.readline()[:-1]
+			api_secret = f.readline()[:-1]
 
-	api.update_status(message)
+		return access_token, access_token_secret, api_key, api_secret
 
-def authenticate_and_read(access_token, access_token_secret, api_key, api_secret):
-	auth = tweepy.OAuthHandler(api_key, api_secret)
-	auth.set_access_token(access_token, access_token_secret)
+	def tweet(self, message):
+		self.api.update_status(message)
 
-	api = tweepy.API(auth)
+	def authenticate_and_read(self):
+		pass
 
-def encrypt_and_post():
-	pass
+	def encrypt_and_post(self, text, recipient):
+		g = gnupg.GPG()
+		possible_matches = []
+		for key in g.list_keys():
+			if recipient in key["uids"]:
+				possible_matches.append(key)
+		if len(possible_matches) > 1:
+			errormsg = "Recipient name ambiguous. The following keys match the recipient name: \n" + ", ".join([key["uids"] for key in possible_matches])
+			raise ValueError(errormsg)
+		else:
+			fingerprint = possible_matches[0]['fingerprint']
+			text_encr = g.encrypt(text, fingerprint)
+			#cut encrypted message into tweets of 140 characters length
+			delimiters = [(i, min(i+140, len(text_encr.data))) for i in xrange(0, len(text_encr.data), 140)]
+
 
 def read_posts(user):
 	website = "https://twitter.com/{}".format(user)
