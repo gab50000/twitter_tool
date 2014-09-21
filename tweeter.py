@@ -47,6 +47,9 @@ class Twit:
 			#cut encrypted message into tweets of 140 characters length
 			delimiters = [(i, min(i+140, len(text_encr.data))) for i in xrange(0, len(text_encr.data), 140)]
 
+			for delim in delimiters:
+				self.tweet(text_encr.data[delim[0] : delim[1]])
+
 
 def read_posts(user):
 	website = "https://twitter.com/{}".format(user)
@@ -60,6 +63,9 @@ def read_posts(user):
 #Save access token, access token secret, api key and api secret in a text file called tokens
 if __name__ == "__main__":
 	script_path = os.path.dirname(os.path.realpath(__file__))
+        if "-h" in sys.argv[1:] or "--help" in sys.argv[1:]:
+            print "Usage: {} [write <text>|read]".format(sys.argv[0])
+            sys.exit()
 	if sys.argv[1] == "write":
 		tokens = read_tokens(os.path.join(script_path, "tokens"))
 		authenticate_and_tweet(" ".join(sys.argv[2:]), *tokens)
