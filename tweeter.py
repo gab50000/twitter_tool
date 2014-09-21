@@ -64,7 +64,7 @@ def read_posts(user):
 if __name__ == "__main__":
 	script_path = os.path.dirname(os.path.realpath(__file__))
         if "-h" in sys.argv[1:] or "--help" in sys.argv[1:]:
-            print "Usage: {} [write <text>|read]".format(sys.argv[0])
+            print "Usage: {} [write <text>|read <username>]".format(sys.argv[0])
             sys.exit()
 	if sys.argv[1] == "write":
 		tokens = read_tokens(os.path.join(script_path, "tokens"))
