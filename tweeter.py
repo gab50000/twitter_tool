@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import requests
 import gnupg
 import os
-
+from datetime import datetime
 class Twit:
 
 	def __init__(self, token_file):
@@ -31,6 +31,7 @@ class Twit:
 
 	def authenticate_and_read(self):
 		pass
+	
 
 	def encrypt_and_post(self, text, recipient):
 		g = gnupg.GPG()
@@ -50,6 +51,9 @@ class Twit:
 			for delim in delimiters:
 				self.tweet(text_encr.data[delim[0] : delim[1]])
 
+def date_string(i, n):
+	date = datetime.now()
+	return "<{:d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d} {:02d}/{:02d}>".format(date.year, date.month, date.day, date.hour, date.minute, date.second, i, n)
 
 def read_posts(user):
 	website = "https://twitter.com/{}".format(user)
@@ -72,5 +76,3 @@ if __name__ == "__main__":
 	elif sys.argv[1] == "read":
 		user = sys.argv[2]
 		read_posts(user)
-
-
